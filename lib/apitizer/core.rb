@@ -5,7 +5,7 @@ module Apitizer
   @collection_actions = [ :index, :create ].freeze
   @member_actions = [ :show, :update, :delete ].freeze
   @action_dictionary = { :index => :get, :show => :get,
-    :create => :post, :update => :post, :delete => :delete }.freeze
+    :create => :post, :update => :put, :delete => :delete }.freeze
 
   singleton_class.class_eval do
     attr_reader :actions, :collection_actions, :member_actions
