@@ -13,6 +13,8 @@ module Apitizer
           http.use_ssl = true if address =~ /^https:/
           response = http.request(request)
           [ response.code, response.to_hash, response.body ]
+        rescue NoMethodError
+          raise
         rescue NameError
           raise Error, 'Invalid method'
         rescue SocketError
