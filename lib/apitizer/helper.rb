@@ -1,3 +1,5 @@
+require 'rack/utils'
+
 module Apitizer
   module Helper
     Error = Class.new(Apitizer::Error)
