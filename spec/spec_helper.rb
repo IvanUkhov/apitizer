@@ -1,4 +1,5 @@
 require 'support/resource_helper'
+require 'webmock/rspec'
 require 'apitizer'
 
 RSpec.configure do |config|
