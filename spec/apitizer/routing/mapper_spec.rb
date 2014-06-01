@@ -21,6 +21,14 @@ describe Apitizer::Routing::Mapper do
   end
 
   describe '#define' do
+    it 'declares the root address' do
+      subject.define do
+        address('https://service.com/api')
+        resources(:articles)
+      end
+      expect_trace(subject, [ :articles, 'xxx' ], [ 'https://service.com/api' ])
+    end
+
     it 'declares plain resources' do
       subject.define { resources(:articles) }
       expect_trace(subject, [ :articles ])

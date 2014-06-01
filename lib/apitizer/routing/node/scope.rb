@@ -7,7 +7,7 @@ module Apitizer
         end
 
         def match(name)
-          !lookup(name).nil?
+          not lookup(name).nil?
         end
 
         def process(path, steps)

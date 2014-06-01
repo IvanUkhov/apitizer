@@ -8,9 +8,12 @@ module Apitizer
 
         def trace(steps, path = Path.new)
           process(path, steps)
-          path.advance(self)
+          advance(path)
+
           return path if steps.empty?
-          lookup!(steps.first).trace(steps, path)
+
+          child = lookup(steps.first) or raise Error, 'Not found'
+          child.trace(steps, path)
         end
 
         def match(name)
@@ -32,8 +35,8 @@ module Apitizer
           children.find { |c| c.match(name) }
         end
 
-        def lookup!(name)
-          lookup(name) or raise Error, 'Not found'
+        def advance(path)
+          path.advance(self)
         end
       end
     end

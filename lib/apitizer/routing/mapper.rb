@@ -1,6 +1,10 @@
 module Apitizer
   module Routing
     class Mapper
+      extend Forwardable
+
+      def_delegator :@root, :define_address
+
       def initialize(&block)
         @root = Node::Root.new
         define(&block) if block_given?
