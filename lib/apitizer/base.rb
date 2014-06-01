@@ -7,8 +7,7 @@ module Apitizer
 
     def process(*arguments)
       action, steps, parameters = prepare(*arguments)
-      path = mapper.trace(steps)
-      raise Error, 'Not permitted' unless path.permitted?(action)
+      path = mapper.trace(action, steps)
       response = dispatcher.send(action, path, parameters)
       data = translator.process(response)
     end

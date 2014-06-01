@@ -1,13 +1,15 @@
 module Apitizer
   module Routing
     class Mapper
-      extend Forwardable
-
-      def_delegator :@root, :trace
-
       def initialize(&block)
         @root = Node::Root.new
         define(&block) if block_given?
+      end
+
+      def trace(action, *arguments)
+        path = @root.trace(*arguments)
+        raise Error, 'Not permitted' unless path.permitted?(action)
+        path
       end
 
       def define(&block)

@@ -6,7 +6,7 @@ describe Apitizer::Routing::Mapper do
   let(:subject_class) { Apitizer::Routing::Mapper }
 
   def create_path
-    double(:<< => nil, :advance => nil)
+    double(:<< => nil, :advance => nil, :permitted? => true)
   end
 
   def expect_steps(steps, path = create_path)
@@ -17,7 +17,7 @@ describe Apitizer::Routing::Mapper do
   end
 
   def expect_trace(mapper, steps, scope = [])
-    mapper.trace(steps, expect_steps(scope + steps))
+    mapper.trace(:arbitrary, steps, expect_steps(scope + steps))
   end
 
   describe '#define' do
@@ -64,8 +64,9 @@ describe Apitizer::Routing::Mapper do
         resources(:articles)
         resources(:articles) { resources(:sections) }
       end
-      expect { subject.trace([ :articles, 'xxx', :sections, 'yyy' ]) }.to \
-        raise_error(Apitizer::Routing::Error, /Not found/i)
+      expect do
+        subject.trace(:arbitrary, [ :articles, 'xxx', :sections, 'yyy' ])
+      end.to raise_error(Apitizer::Routing::Error, /Not found/i)
     end
   end
 end

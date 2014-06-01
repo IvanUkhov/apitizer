@@ -2,21 +2,7 @@ require 'spec_helper'
 
 describe Apitizer::Routing::Node do
   extend ResourceHelper
-
-  def create_tree(*names, **operations)
-    root = Apitizer::Routing::Node::Root.new
-    leaf = names.inject(root) do |parent, name|
-      node = Apitizer::Routing::Node::Collection.new(name)
-      parent.append(node)
-      node
-    end
-    operations.each do |name, action|
-      operation = Apitizer::Routing::Node::Operation.new(
-        name, action: action, on: :member)
-      leaf.append(operation)
-    end
-    root
-  end
+  include FactoryHelper
 
   shared_examples 'an adequate pathfinder' do
     let(:path) { double(:<< => nil, :advance => nil) }
