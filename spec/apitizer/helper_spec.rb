@@ -24,16 +24,12 @@ describe Apitizer::Helper do
     end
   end
 
-  describe '.translate_action' do
-    rest_http_dictionary.each do |action, method|
-      it "returns the #{ method } verb for the #{ action } action" do
-        expect(subject_module.translate_action(action)).to eq(method)
-      end
-    end
-
-    it 'raises exceptions when encounters unknown actions' do
-      expect { subject_module.translate_action(:rock) }.to \
-        raise_error(subject_module::Error, /Unknown action/i)
+  describe '.deep_merge' do
+    it 'merges two hashes taking into account nested hashes' do
+      one = { a: 1, b: { c: 2, d: 3 } }
+      two = { a: 4, b: { c: 5, e: 6 } }
+      expect(subject_module.deep_merge(one, two)).to \
+        eq(a: 4, b: { c: 5, d: 3, e: 6 })
     end
   end
 

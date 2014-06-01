@@ -14,8 +14,11 @@ module Apitizer
       end
     end
 
-    def self.translate_action(action)
-      Apitizer.action_dictionary[action] or raise Error, 'Unknown action'
+    def self.deep_merge(one, two)
+      merger = Proc.new do |key, v1, v2|
+        Hash === v1 && Hash === v2 ? v1.merge(v2, &merger) : v2
+      end
+      one.merge(two, &merger)
     end
 
     def self.build_query(parameters)
