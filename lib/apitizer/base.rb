@@ -8,7 +8,8 @@ module Apitizer
     def process(*arguments)
       request = build_request(*arguments)
       response = dispatcher.process(request)
-      data = translator.process(response)
+      content = translator.process(response)
+      Result.new(request: request, response: response, content: content)
     end
 
     Apitizer.actions.each do |action|
