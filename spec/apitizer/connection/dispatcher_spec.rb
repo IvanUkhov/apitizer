@@ -2,10 +2,14 @@ require 'spec_helper'
 
 describe Apitizer::Connection::Dispatcher do
   extend ResourceHelper
+  include ResourceHelper
 
   let(:headers) { { 'Secret-Token' => 'arbitrary' } }
   let(:address) { 'https://service.com/api/v1/json/articles' }
-  let(:subject) { Apitizer::Connection::Dispatcher.new(headers: headers) }
+  let(:subject) do
+    Apitizer::Connection::Dispatcher.new(
+      dictionary: rest_http_dictionary, headers: headers)
+  end
 
   def create_request(action, address)
     double(action: action, address: address, parameters: {})

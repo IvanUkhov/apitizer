@@ -22,6 +22,16 @@ describe Apitizer::Base do
       stub_request(:get, 'articles')
       expect { subject.process(:index, :articles) }.not_to raise_error
     end
+
+    it 'customizes the mapping between the REST actions and HTTP verbs' do
+      scope_name = address
+      subject = subject_class.new(dictionary: { update: :delete }) do
+        scope(scope_name) { resources(:articles) }
+      end
+      stub = stub_request(:delete, 'articles/xxx')
+      subject.process(:update, :articles, 'xxx')
+      expect(stub).to have_been_requested
+    end
   end
 
   describe '#process' do

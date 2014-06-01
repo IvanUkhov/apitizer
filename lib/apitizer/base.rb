@@ -1,7 +1,7 @@
 module Apitizer
   class Base
     def initialize(**options, &block)
-      @options = options
+      @options = Helper.deep_merge(Apitizer.defaults, options)
       @block = block
     end
 
@@ -33,7 +33,8 @@ module Apitizer
     end
 
     def build_dispatcher
-      Connection::Dispatcher.new(adaptor: self.adaptor, headers: self.headers)
+      Connection::Dispatcher.new(adaptor: self.adaptor,
+        dictionary: self.dictionary, headers: self.headers)
     end
 
     def build_translator
@@ -54,7 +55,6 @@ module Apitizer
 
     def method_missing(name, *arguments, &block)
       return @options[name] if @options.key?(name)
-      return Apitizer.defaults[name] if Apitizer.defaults.key?(name)
       super
     end
   end
