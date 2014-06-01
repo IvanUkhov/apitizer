@@ -1,17 +1,16 @@
 module Apitizer
   class Base
-    extend Forwardable
-
-    private def_delegator :dispatcher, :process, :dispatch
-    private def_delegator :translator, :process, :translate
-
     def initialize(**options, &block)
       @options = options
       @block = block
     end
 
     def process(*arguments)
-      translate(dispatch(trace(*arguments)))
+      action, steps, parameters = prepare(*arguments)
+      path = mapper.trace(steps)
+      raise Error, 'Not permitted' unless path.permitted?(action)
+      response = dispatcher.send(action, path, parameters)
+      data = translator.process(response)
     end
 
     Apitizer.actions.each do |action|
@@ -45,12 +44,6 @@ module Apitizer
     def prepare(action, *path)
       parameters = path.last.is_a?(Hash) ? path.pop : {}
       [ action.to_sym, path.flatten.map(&:to_sym), parameters ]
-    end
-
-    def trace(*arguments)
-      action, path, parameters = prepare(*arguments)
-      request = Connection::Request.new(action: action, parameters: parameters)
-      mapper.trace(request, path)
     end
 
     def method_missing(name, *arguments, &block)

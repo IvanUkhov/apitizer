@@ -6,19 +6,20 @@ module Apitizer
           children << child
         end
 
-        def assemble(request, path)
-          process(request, path)
-          return authorize(request) if path.empty?
-          lookup!(path.first).assemble(request, path)
+        def trace(steps, path = Path.new)
+          process(path, steps)
+          path.advance(self)
+          return path if steps.empty?
+          lookup!(steps.first).trace(steps, path)
         end
 
         def match(name)
         end
 
-        def process(request, path)
+        def process(path, steps)
         end
 
-        def permitted?(request)
+        def permitted?(action, path)
         end
 
         protected
@@ -33,12 +34,6 @@ module Apitizer
 
         def lookup!(name)
           lookup(name) or raise Error, 'Not found'
-        end
-
-        def authorize(request)
-          raise Error, 'Not permitted' unless permitted?(request)
-          request.sign(self)
-          request
         end
       end
     end

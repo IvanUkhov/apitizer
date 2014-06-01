@@ -14,17 +14,17 @@ module Apitizer
           @name == name
         end
 
-        def process(request, path)
-          request << path.shift # @name
-          return request if path.empty?
-          request << path.shift # id
+        def process(path, steps)
+          path << steps.shift # @name
+          return path if steps.empty?
+          path << steps.shift # id
         end
 
-        def permitted?(request)
-          return false unless @actions.include?(request.action)
+        def permitted?(action, path)
+          return false unless @actions.include?(action)
 
-          id_present = request.path.last != @name
-          member_action = Helper.member_action?(request.action)
+          id_present = path.steps.last != @name
+          member_action = Helper.member_action?(action)
 
           id_present == member_action
         end

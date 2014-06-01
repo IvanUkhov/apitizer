@@ -3,7 +3,7 @@ module Apitizer
     class Mapper
       extend Forwardable
 
-      def_delegator :@root, :assemble, :trace
+      def_delegator :@root, :trace
 
       def initialize(&block)
         @root = Node::Root.new

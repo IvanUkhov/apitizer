@@ -3,21 +3,13 @@ module Apitizer
     class Request
       extend Forwardable
 
-      attr_reader :action, :parameters, :path, :node
-      def_delegators :@path, :<<
+      attr_reader :action, :path, :parameters
+      def_delegator :path, :address
 
-      def initialize(action:, parameters: {})
+      def initialize(action:, path:, parameters: {})
         @action = action
+        @path = path
         @parameters = parameters
-        @path = []
-      end
-
-      def address
-        @path.map(&:to_s).join('/')
-      end
-
-      def sign(node)
-        @node = node
       end
     end
   end

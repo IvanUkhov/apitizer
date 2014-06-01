@@ -6,7 +6,9 @@ module Apitizer
         @adaptor = Adaptor.build(adaptor)
       end
 
-      def process(request)
+      def send(action, path, parameters = {})
+        request = Connection::Request.new(action: action,
+          path: path, parameters: parameters)
         method = Helper.translate_action(request.action)
         code, _, body = @adaptor.process(method, request.address,
           request.parameters, @headers)

@@ -3,56 +3,74 @@ require 'spec_helper'
 describe Apitizer::Routing::Node do
   extend ResourceHelper
 
-  def create_request(action)
-    Apitizer::Connection::Request.new(action: action)
-  end
-
-  let(:subject_module) { Apitizer::Routing::Node }
-
-  def create_tree(*path)
-    root = subject_module::Root.new
-    path.inject(root) do |parent, name|
-      node = subject_module::Collection.new(name)
+  def create_tree(*names, **operations)
+    root = Apitizer::Routing::Node::Root.new
+    leaf = names.inject(root) do |parent, name|
+      node = Apitizer::Routing::Node::Collection.new(name)
       parent.append(node)
       node
+    end
+    operations.each do |name, action|
+      operation = Apitizer::Routing::Node::Operation.new(
+        name, action: action, on: :member)
+      leaf.append(operation)
     end
     root
   end
 
-  describe 'Base#assemble' do
-    let(:root) { create_tree(:articles, :sections) }
+  shared_examples 'an adequate pathfinder' do
+    let(:path) { double(:<< => nil, :advance => nil) }
 
-    shared_examples 'adequate assembler' do
-      let(:request) { create_request(action) }
+    it 'gradually builds up Paths' do
+      steps.each do |step|
+        expect(path).to receive(:<<).once.ordered.with(step)
+      end
+      root.trace(steps, path)
+    end
 
-      it 'builds up Requests' do
-        expect(request).to receive(:<<).
-          exactly(path.size).times.and_call_original
-        root.assemble(request, path)
+    it 'gradually advances Paths' do
+      steps.select { |step| step.is_a?(Symbol) }.each do |name|
+        expect(path).to receive(:advance).once.ordered.
+          with { |n| n.match(name) }
+      end
+      root.trace(steps, path)
+    end
+  end
+
+  describe '::Base#trace' do
+    context 'when working with plain collections' do
+      let(:root) { create_tree(:articles) }
+
+      context 'when looking for collections' do
+        let(:steps) { [ :articles ] }
+        it_behaves_like 'an adequate pathfinder'
       end
 
-      it 'signs Requests' do
-        expect(request).to receive(:sign).
-          with(satisfy { |n| n.match(:sections) })
-        root.assemble(request, path)
+      context 'when looking for members' do
+        let(:steps) { [ :articles, 'xxx' ] }
+        it_behaves_like 'an adequate pathfinder'
       end
     end
 
-    restful_collection_actions.each do |action|
-      context "when tracing #{ action } actions" do
-        let(:action) { action }
-        let(:path) { [ :articles, 'xxx', :sections ] }
+    context 'when working with nested collections' do
+      let(:root) { create_tree(:articles, :sections) }
 
-        it_behaves_like 'adequate assembler'
+      context 'when looking for collections' do
+        let(:steps) { [ :articles, 'xxx', :sections ] }
+        it_behaves_like 'an adequate pathfinder'
+      end
+
+      context 'when looking for members' do
+        let(:steps) { [ :articles, 'xxx', :sections, 'yyy' ] }
+        it_behaves_like 'an adequate pathfinder'
       end
     end
 
-    restful_member_actions.each do |action|
-      context "when tracing #{ action } actions" do
-        let(:action) { action }
-        let(:path) { [ :articles, 'xxx', :sections, 'yyy' ] }
-
-        it_behaves_like 'adequate assembler'
+    restful_actions.each do |action|
+      context "when working with custom #{ action } actions" do
+        let(:root) { create_tree(:articles, shred: action) }
+        let(:steps) { [ :articles, 'xxx', :shred ] }
+        it_behaves_like 'an adequate pathfinder'
       end
     end
   end

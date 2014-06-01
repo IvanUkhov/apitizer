@@ -19,12 +19,12 @@ module Apitizer
           end
         end
 
-        def process(request, path)
-          request << path.shift # @name
+        def process(path, steps)
+          path << steps.shift # @name
         end
 
-        def permitted?(request)
-          @action == request.action
+        def permitted?(action, path)
+          @action == action
         end
       end
     end

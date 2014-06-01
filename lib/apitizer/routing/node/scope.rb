@@ -2,16 +2,16 @@ module Apitizer
   module Routing
     module Node
       class Scope < Base
-        def initialize(path)
-          @path = Array(path)
+        def initialize(steps)
+          @steps = Array(steps)
         end
 
         def match(name)
           !lookup(name).nil?
         end
 
-        def process(request, path)
-          @path.each { |chunk| request << chunk }
+        def process(path, steps)
+          @steps.each { |step| path << step }
         end
       end
     end
