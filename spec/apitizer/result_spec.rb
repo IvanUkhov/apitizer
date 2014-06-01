@@ -11,6 +11,9 @@ describe Apitizer::Result do
   end
 
   it { should == content }
+  it { should be_a(content.class) }
+  it { should be_kind_of(content.class) }
+  it { should be_instance_of(content.class) }
   its(:path) { should == path }
   its(:code) { should == 200 }
 end
