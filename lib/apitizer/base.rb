@@ -6,9 +6,8 @@ module Apitizer
     end
 
     def process(*arguments)
-      action, steps, parameters = prepare(*arguments)
-      path = mapper.trace(action, steps)
-      response = dispatcher.send(action, path, parameters)
+      request = build_request(*arguments)
+      response = dispatcher.process(request)
       data = translator.process(response)
     end
 
@@ -18,6 +17,8 @@ module Apitizer
       end
     end
 
+    private
+
     [ :mapper, :dispatcher, :translator ].each do |component|
       class_eval <<-METHOD, __FILE__, __LINE__ + 1
         def #{ component }
@@ -25,8 +26,6 @@ module Apitizer
         end
       METHOD
     end
-
-    private
 
     def build_mapper
       Routing::Mapper.new(&@block)
@@ -38,6 +37,13 @@ module Apitizer
 
     def build_translator
       Processing::Translator.new(format: self.format)
+    end
+
+    def build_request(*arguments)
+      action, steps, parameters = prepare(*arguments)
+      path = mapper.trace(action, steps)
+      Connection::Request.new(action: action, path: path,
+        parameters: parameters)
     end
 
     def prepare(action, *path)
