@@ -11,7 +11,7 @@ module Apitizer
         method = translate(request.action)
         code, _, body = @adaptor.process(method, request.address,
           request.parameters, @headers)
-        Response.new(code: code.to_i, body: body)
+        Response.new(code: code, body: body.join)
       end
 
       private
