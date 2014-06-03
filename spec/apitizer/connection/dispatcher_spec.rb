@@ -5,25 +5,36 @@ describe Apitizer::Connection::Dispatcher do
   include ResourceHelper
 
   let(:address) { 'https://service.com/api/articles' }
-  let(:subject) do
-    Apitizer::Connection::Dispatcher.new(
-      dictionary: rest_http_dictionary)
-  end
 
-  def create_request(action, address)
+  def create_request(action)
     double(action: action, address: address, parameters: {})
   end
 
   describe '#process' do
-    restful_actions.each do |action|
-      method = rest_http_dictionary[action]
+    { :json => '{}', :yaml => '---' }.each do |format, sample|
+      context "when interacting via #{ format }" do
+        let(:subject) do
+          Apitizer::Connection::Dispatcher.new(
+            format: format, dictionary: rest_http_dictionary)
+        end
 
-      context "when sending #{ action } Requests" do
-        it 'returns proper Responses' do
-          stub_http_request(method, address).
-            to_return(code: '200', body: 'Hej!')
-          response = subject.process(create_request(action, address))
-          expect([ response.code, response.body ]).to eq([ 200, 'Hej!' ])
+        restful_actions.each do |action|
+          method = rest_http_dictionary[action]
+
+          context "when performing #{ action } actions" do
+            it "uses the #{ method } HTTP verb" do
+              stub = stub_http_request(method, address).to_return(body: sample)
+              response = subject.process(create_request(action))
+              expect(stub).to have_been_requested
+            end
+
+            it 'sets proper headers' do
+              stub = stub_http_request(method, address).to_return(body: sample).
+                with(headers: { 'Accept' => mime_type_dictionary[format] })
+              response = subject.process(create_request(action))
+              expect(stub).to have_been_requested
+            end
+          end
         end
       end
     end

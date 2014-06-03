@@ -3,12 +3,10 @@ require 'spec_helper'
 describe Apitizer::Result do
   let(:path) { double('Path') }
   let(:request) { double('Request', path: path) }
-  let(:response) { double('Response', code: 200) }
   let(:content) { double('Content') }
+  let(:response) { double('Response', code: 200, content: content) }
 
-  subject do
-    Apitizer::Result.new(request: request, response: response, content: content)
-  end
+  subject { Apitizer::Result.new(request: request, response: response) }
 
   it { should == content }
   it { should be_a(content.class) }

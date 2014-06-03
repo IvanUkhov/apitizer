@@ -1,11 +1,11 @@
 module Apitizer
   module Connection
     class Response
-      attr_reader :code, :body
+      attr_reader :code, :content
 
-      def initialize(code:, body:)
+      def initialize(code:, content:)
         @code = code
-        @body = body
+        @content = content
       end
     end
   end

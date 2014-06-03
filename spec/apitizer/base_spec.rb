@@ -12,11 +12,12 @@ describe Apitizer::Base do
   end
 
   describe '#new' do
-    it 'does not require any arguments' do
-      expect { subject_class.new }.not_to raise_error
+    it 'requires a block' do
+      expect { subject_class.new }.to raise_error(
+        Apitizer::Error, 'Block is required')
     end
 
-    it 'draws a routing map when a block is given' do
+    it 'draws a routing map' do
       scope_name = address
       subject = subject_class.new { scope(scope_name) { resources(:articles) } }
       stub_request(:get, 'articles')
