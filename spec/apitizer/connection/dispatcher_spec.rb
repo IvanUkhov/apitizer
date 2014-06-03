@@ -21,10 +21,9 @@ describe Apitizer::Connection::Dispatcher do
 
       context "when sending #{ action } Requests" do
         it 'sends proper headers' do
-          stub = stub_http_request(method, address)
+          stub = stub_http_request(method, address).with(headers: headers)
           response = subject.process(create_request(action, address))
-          expect(stub).to \
-            have_requested(method, address).with(headers: headers)
+          expect(stub).to have_been_requested
         end
 
         it 'returns proper Responses' do

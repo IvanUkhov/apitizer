@@ -4,7 +4,7 @@ describe Apitizer::Connection::Adaptor do
   let(:parent_module) { Apitizer::Connection }
   let(:address) { 'https://service.com/api/articles' }
 
-  shared_examples 'a Rack application' do |method:, code:, headers:, body:|
+  shared_examples '#call of a Rack app' do |method:, code:, headers:, body:|
     before(:each) do
       stub_http_request(method, address).to_return(
         code: code, headers: headers, body: body)
@@ -45,8 +45,31 @@ describe Apitizer::Connection::Adaptor do
     subject { parent_module::Adaptor::Standard.new }
 
     describe '#process' do
-      it_behaves_like 'a Rack application', method: :get, code: 200,
-        headers: { 'a' => [ 'b' ] }, body: 'Hej!'
+      [ :get ].each do |method|
+        context "when sending #{ method } requests" do
+          it_behaves_like '#call of a Rack app', method: method, code: 200,
+            headers: { 'a' => [ 'b' ] }, body: 'Hej!'
+
+          it 'encodes parameters into the URI' do
+            stub = stub_http_request(method, address).with(query: { life: 42 })
+            subject.process(method, address, life: 42)
+            expect(stub).to have_been_requested
+          end
+        end
+      end
+
+      [ :post, :put, :patch, :delete ].each do |method|
+        context "when sending #{ method } requests" do
+          it_behaves_like '#call of a Rack app', method: method, code: 200,
+            headers: { 'a' => [ 'b' ] }, body: 'Hej!'
+
+          it 'encodes parameters into the body' do
+            stub = stub_http_request(method, address).with(body: 'life=42')
+            response = subject.process(method, address, life: 42)
+            expect(stub).to have_been_requested
+          end
+        end
+      end
 
       it 'raises exceptions for unknown methods' do
         expect { subject.process(:smile, address) }.to \
