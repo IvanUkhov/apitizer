@@ -1,7 +1,10 @@
 module Apitizer
   class Base
+    extend Forwardable
+
+    def_delegator :mapper, :define
+
     def initialize(**options, &block)
-      raise Error, 'Block is required' unless block_given?
       @options = Helper.deep_merge(Apitizer.defaults, options)
       @block = block
     end

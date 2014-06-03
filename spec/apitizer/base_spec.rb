@@ -12,12 +12,11 @@ describe Apitizer::Base do
   end
 
   describe '#new' do
-    it 'requires a block' do
-      expect { subject_class.new }.to raise_error(
-        Apitizer::Error, 'Block is required')
+    it 'does not require any arguments' do
+      expect { subject_class.new }.not_to raise_error
     end
 
-    it 'draws a routing map' do
+    it 'draws a routing map when a block is given' do
       scope_name = address
       subject = subject_class.new { scope(scope_name) { resources(:articles) } }
       stub_request(:get, 'articles')
@@ -32,6 +31,16 @@ describe Apitizer::Base do
       stub = stub_request(:delete, 'articles/xxx')
       subject.process(:update, :articles, 'xxx')
       expect(stub).to have_been_requested
+    end
+  end
+
+  describe '#define' do
+    it 'is another way of drawing a routing map' do
+      scope_name = address
+      subject = subject_class.new
+      subject.define { scope(scope_name) { resources(:articles) } }
+      stub_request(:get, 'articles')
+      expect { subject.process(:index, :articles) }.not_to raise_error
     end
   end
 
