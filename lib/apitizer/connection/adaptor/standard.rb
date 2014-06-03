@@ -12,7 +12,7 @@ module Apitizer
           http = Net::HTTP.new(request.uri.host, request.uri.port)
           http.use_ssl = true if address =~ /^https:/
           response = http.request(request)
-          [ response.code, response.to_hash, response.body ]
+          [ response.code.to_i, response.to_hash, Array(response.body) ]
         rescue NoMethodError
           raise
         rescue NameError
