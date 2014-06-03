@@ -14,6 +14,6 @@ describe Apitizer::Result do
   it { should be_a(content.class) }
   it { should be_kind_of(content.class) }
   it { should be_instance_of(content.class) }
-  its(:path) { should == path }
-  its(:code) { should == 200 }
+  it { expect(subject.path).to eq(path) }
+  it { expect(subject.code).to eq(200) }
 end

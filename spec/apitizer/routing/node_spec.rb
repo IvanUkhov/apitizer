@@ -15,9 +15,11 @@ describe Apitizer::Routing::Node do
     end
 
     it 'gradually advances Paths' do
+      expect(path).to receive(:advance).once.ordered # root
       steps.select { |step| step.is_a?(Symbol) }.each do |name|
-        expect(path).to receive(:advance).once.ordered.
-          with { |n| n.match(name) }
+        expect(path).to receive(:advance).once.ordered do |node|
+          expect(node.match(name)).to be true
+        end
       end
       root.trace(steps, path)
     end

@@ -8,13 +8,13 @@ describe Apitizer::Helper do
   describe '.member_action?' do
     restful_member_actions.each do |action|
       it "returns true for the #{ action } member action" do
-        expect(subject_module.member_action?(action)).to be_true
+        expect(subject_module.member_action?(action)).to be true
       end
     end
 
     restful_collection_actions.each do |action|
       it "returns false for the #{ action } collection action" do
-        expect(subject_module.member_action?(action)).to be_false
+        expect(subject_module.member_action?(action)).to be false
       end
     end
 
