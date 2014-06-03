@@ -39,7 +39,7 @@ apitizer = Apitizer::Base.new(options) do
   address 'https://typekit.com/api/v1/json'
 
   resources :families, only: :show do
-    show ':variant', on: :member
+    show ':variation', on: :member
   end
 
   resources :kits do
