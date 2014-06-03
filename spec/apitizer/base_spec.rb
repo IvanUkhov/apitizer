@@ -34,37 +34,35 @@ describe Apitizer::Base do
     end
   end
 
+  describe '#define' do
+    it 'is another way of drawing a routing map' do
+      scope_name = address
+      subject = subject_class.new
+      subject.define { scope(scope_name) { resources(:articles) } }
+      stub_request(:get, 'articles')
+      expect { subject.process(:index, :articles) }.not_to raise_error
+    end
+  end
+
   describe '#process' do
     subject do
       scope_name = address
       subject_class.new { scope(scope_name) { resources(:articles) } }
     end
 
-    restful_collection_actions.each do |action|
+    restful_actions.each do |action|
       method = rest_http_dictionary[action]
+      steps = [ :articles ]
+      steps << 'xxx' if restful_member_actions.include?(action)
 
       it "is capable of #{ action } actions" do
-        stub_request(method, 'articles')
-        expect { subject.process(action, :articles) }.not_to raise_error
+        stub_request(method, steps.join('/'))
+        expect { subject.process(action, *steps) }.not_to raise_error
       end
 
       it "is capable of #{ action } actions via alias" do
-        stub_request(method, 'articles')
-        expect { subject.send(action, :articles) }.not_to raise_error
-      end
-    end
-
-    restful_member_actions.each do |action|
-      method = rest_http_dictionary[action]
-
-      it "is capable of #{ action } actions" do
-        stub_request(method, 'articles/xxx')
-        expect { subject.process(action, :articles, 'xxx') }.not_to raise_error
-      end
-
-      it "is capable of #{ action } actions via alias" do
-        stub_request(method, 'articles/xxx')
-        expect { subject.send(action, :articles, 'xxx') }.not_to raise_error
+        stub_request(method, steps.join('/'))
+        expect { subject.send(action, *steps) }.not_to raise_error
       end
     end
   end

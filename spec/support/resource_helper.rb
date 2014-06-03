@@ -15,4 +15,8 @@ module ResourceHelper
     { :index => :get, :show => :get, :create => :post,
       :update => :put, :delete => :delete }
   end
+
+  def mime_type_dictionary
+    { :json => 'application/json', :yaml => 'application/x-yaml' }
+  end
 end
