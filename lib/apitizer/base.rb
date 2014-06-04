@@ -28,8 +28,9 @@ module Apitizer
     end
 
     def dispatcher
-      @dispatcher ||= Connection::Dispatcher.new(format: self.format,
-        adaptor: adaptor, dictionary: dictionary, headers: headers)
+      @dispatcher ||= Connection::Dispatcher.new(format: @options[:format],
+        adaptor: @options[:adaptor], dictionary: @options[:dictionary],
+        headers: @options[:headers])
     end
 
     def build_request(*arguments)
@@ -42,11 +43,6 @@ module Apitizer
     def prepare_arguments(action, *path)
       parameters = path.last.is_a?(Hash) ? path.pop : {}
       [ action.to_sym, path.flatten.map(&:to_sym), parameters ]
-    end
-
-    def method_missing(name, *arguments, &block)
-      return @options[name] if @options.key?(name)
-      super
     end
   end
 end

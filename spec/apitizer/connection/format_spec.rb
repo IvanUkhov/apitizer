@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Apitizer::Format do
-  let(:subject_class) { Apitizer::Format }
+describe Apitizer::Connection::Format do
+  let(:subject_class) { Apitizer::Connection::Format }
 
   { :json => '{ "articles": [] }',
     :yaml => "---\narticles: []" }.each do |format, sample|

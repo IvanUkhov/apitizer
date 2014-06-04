@@ -1,6 +1,8 @@
-require_relative 'connection/request'
+require_relative 'connection/format'
 require_relative 'connection/adaptor'
 require_relative 'connection/dispatcher'
+
+require_relative 'connection/request'
 require_relative 'connection/response'
 
 module Apitizer
