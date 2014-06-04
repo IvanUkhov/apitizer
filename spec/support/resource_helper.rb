@@ -16,6 +16,10 @@ module ResourceHelper
       :update => :put, :delete => :delete }
   end
 
+  def http_methods
+    [ :get, :post, :put, :patch, :delete ]
+  end
+
   def mime_type_dictionary
     { :json => 'application/json', :yaml => 'application/x-yaml' }
   end

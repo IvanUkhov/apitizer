@@ -29,20 +29,20 @@ module Apitizer
 
     def dispatcher
       @dispatcher ||= Connection::Dispatcher.new(format: @options[:format],
-        adaptor: @options[:adaptor], dictionary: @options[:dictionary],
-        headers: @options[:headers])
+        adaptor: @options[:adaptor], headers: @options[:headers])
     end
 
-    def build_request(*arguments)
-      action, steps, parameters = prepare_arguments(*arguments)
+    def build_request(action, *arguments)
+      method, steps, parameters = prepare_arguments(action, *arguments)
       path = mapper.trace(action, steps)
-      Connection::Request.new(action: action, path: path,
+      Connection::Request.new(method: method, path: path,
         parameters: parameters)
     end
 
     def prepare_arguments(action, *path)
       parameters = path.last.is_a?(Hash) ? path.pop : {}
-      [ action.to_sym, path.flatten.map(&:to_sym), parameters ]
+      method = @options[:dictionary][action] or raise Error, 'Unknown action'
+      [ method, path.flatten.map(&:to_sym), parameters ]
     end
   end
 end

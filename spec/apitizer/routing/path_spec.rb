@@ -19,7 +19,7 @@ describe Apitizer::Routing::Path do
     end
   end
 
-  an_adequate_guard = Proc.new do |only_actions = restful_actions|
+  shared_examples 'an adequate guard' do |only_actions: restful_actions|
     (restful_collection_actions & only_actions).each do |action|
       it "is true for #{ action } collection action" do
         path = root.trace(steps)
@@ -68,21 +68,21 @@ describe Apitizer::Routing::Path do
       let(:root) { create_tree(:articles) }
       let(:steps) { [ :articles ] }
 
-      instance_exec(&an_adequate_guard)
+      it_behaves_like 'an adequate guard'
     end
 
     context 'when working with nested collections' do
       let(:root) { create_tree(:articles, :sections) }
       let(:steps) { [ :articles, 'yyy', :sections ] }
 
-      instance_exec(&an_adequate_guard)
+      it_behaves_like 'an adequate guard'
     end
 
     context 'when working with collections restricted to index and show' do
       let(:root) { create_tree([ :articles, [ :index, :show ] ]) }
       let(:steps) { [ :articles ] }
 
-      instance_exec([ :index, :show ], &an_adequate_guard)
+      it_behaves_like 'an adequate guard', only_actions: [ :index, :show ]
     end
 
     restful_member_actions.each do |action|
