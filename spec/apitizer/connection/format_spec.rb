@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apitizer::Connection::Format do
+RSpec.describe Apitizer::Connection::Format do
   let(:subject_class) { Apitizer::Connection::Format }
 
   { :json => '{ "articles": [] }',

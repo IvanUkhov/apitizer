@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apitizer::Connection::Dispatcher do
+RSpec.describe Apitizer::Connection::Dispatcher do
   extend ResourceHelper
   include ResourceHelper
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apitizer::Base do
+RSpec.describe Apitizer::Base do
   extend ResourceHelper
 
   let(:subject_class) { Apitizer::Base }

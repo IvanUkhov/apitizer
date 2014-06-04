@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apitizer::Routing::Mapper do
+RSpec.describe Apitizer::Routing::Mapper do
   extend ResourceHelper
 
   let(:subject_class) { Apitizer::Routing::Mapper }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apitizer::Result do
+RSpec.describe Apitizer::Result do
   let(:path) { double('Path') }
   let(:request) { double('Request', path: path) }
   let(:content) { double('Content') }

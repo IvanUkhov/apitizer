@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apitizer::Connection::Adaptor do
+RSpec.describe Apitizer::Connection::Adaptor do
   let(:parent_module) { Apitizer::Connection }
   let(:address) { 'https://service.com/api/articles' }
 

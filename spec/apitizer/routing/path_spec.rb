@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apitizer::Routing::Path do
+RSpec.describe Apitizer::Routing::Path do
   extend ResourceHelper
   include FactoryHelper
 
