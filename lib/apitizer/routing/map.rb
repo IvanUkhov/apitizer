@@ -10,8 +10,8 @@ module Apitizer
         define(&block) if block_given?
       end
 
-      def trace(action, steps)
-        path = @root.trace(steps) or raise Error, 'Not found'
+      def trace(action, *arguments)
+        path = @root.trace(*arguments) or raise Error, 'Not found'
         raise Error, 'Not permitted' unless path.permit?(action)
         path
       end
