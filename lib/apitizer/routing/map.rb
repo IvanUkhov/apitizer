@@ -10,21 +10,14 @@ module Apitizer
         define(&block) if block_given?
       end
 
-      def trace(action, *arguments)
-        path = @root.trace(*arguments)
-        raise Error, 'Not permitted' unless path.permitted?(action)
+      def trace(action, steps)
+        path = @root.trace(steps) or raise Error, 'Not found'
+        raise Error, 'Not permitted' unless path.permit?(action)
         path
       end
 
       def define(&block)
         proxy = Proxy.new(self)
-        proxy.instance_eval(&block)
-      end
-
-      def define_scope(path, parent: @root, &block)
-        child = Node::Scope.new(path)
-        parent.append(child)
-        proxy = Proxy.new(self, parent: child)
         proxy.instance_eval(&block)
       end
 

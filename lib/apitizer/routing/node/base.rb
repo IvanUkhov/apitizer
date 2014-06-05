@@ -7,36 +7,34 @@ module Apitizer
         end
 
         def trace(steps, path = Path.new)
-          process(path, steps)
-          advance(path)
+          return nil unless recognize?(steps)
 
+          steps, path = steps.clone, path.clone
+
+          walk(steps, path)
           return path if steps.empty?
 
-          child = lookup(steps.first) or raise Error, 'Not found'
-          child.trace(steps, path)
+          children.each do |child|
+            branch = child.trace(steps, path)
+            return branch if branch
+          end
+
+          nil
         end
 
-        def match(name)
+        def recognize?(steps)
         end
 
-        def process(path, steps)
+        def permit?(action, on:)
         end
 
-        def permitted?(action, path)
-        end
+        private
 
-        protected
+        def walk(steps, path)
+        end
 
         def children
           @children ||= []
-        end
-
-        def lookup(name)
-          children.find { |c| c.match(name) }
-        end
-
-        def advance(path)
-          path.advance(self)
         end
       end
     end

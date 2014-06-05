@@ -14,6 +14,10 @@ module Apitizer
       end
     end
 
+    def self.action_scope(action)
+      member_action?(action) ? :member : :collection
+    end
+
     def self.deep_merge(one, two)
       merger = Proc.new do |key, v1, v2|
         Hash === v1 && Hash === v2 ? v1.merge(v2, &merger) : v2

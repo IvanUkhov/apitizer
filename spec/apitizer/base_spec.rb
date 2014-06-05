@@ -17,16 +17,20 @@ RSpec.describe Apitizer::Base do
     end
 
     it 'draws a routing map when a block is given' do
-      scope_name = address
-      subject = subject_class.new { scope(scope_name) { resources(:articles) } }
+      prefix = address
+      subject = subject_class.new do
+        address(prefix)
+        resources(:articles)
+      end
       stub_request(:get, 'articles')
       expect { subject.process(:index, :articles) }.not_to raise_error
     end
 
     it 'customizes the mapping between the REST actions and HTTP verbs' do
-      scope_name = address
+      prefix = address
       subject = subject_class.new(dictionary: { update: :delete }) do
-        scope(scope_name) { resources(:articles) }
+        address(prefix)
+        resources(:articles)
       end
       stub = stub_request(:delete, 'articles/xxx')
       subject.process(:update, :articles, 'xxx')
@@ -36,9 +40,12 @@ RSpec.describe Apitizer::Base do
 
   describe '#define' do
     it 'is another way of drawing a routing map' do
-      scope_name = address
+      prefix = address
       subject = subject_class.new
-      subject.define { scope(scope_name) { resources(:articles) } }
+      subject.define do
+        address(prefix)
+        resources(:articles)
+      end
       stub_request(:get, 'articles')
       expect { subject.process(:index, :articles) }.not_to raise_error
     end
@@ -46,8 +53,11 @@ RSpec.describe Apitizer::Base do
 
   describe '#process' do
     subject do
-      scope_name = address
-      subject_class.new { scope(scope_name) { resources(:articles) } }
+      prefix = address
+      subject_class.new do
+        address(prefix)
+        resources(:articles)
+      end
     end
 
     restful_actions.each do |action|

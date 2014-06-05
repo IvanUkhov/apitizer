@@ -3,78 +3,69 @@ require 'spec_helper'
 RSpec.describe Apitizer::Routing::Map do
   extend ResourceHelper
 
-  let(:subject_class) { Apitizer::Routing::Map }
-
-  def create_path
-    double(:<< => nil, :advance => nil, :permitted? => true)
-  end
-
-  def expect_steps(steps, path = create_path)
-    Array(steps).each do |step|
-      expect(path).to receive(:<<).once.ordered.with(step)
-    end
-    path
-  end
-
-  def expect_trace(map, steps, scope = [])
-    map.trace(:arbitrary, steps, expect_steps(scope + steps))
-  end
-
   describe '#define' do
+    it 'declares plain resources' do
+      subject.define { resources(:articles) }
+      path = subject.trace(:index, [ :articles ])
+      expect(path.address).to eq('articles')
+    end
+
+    it 'declares nested resources' do
+      subject.define { resources(:articles) { resources(:sections) } }
+      path = subject.trace(:show, [ :articles, 'xxx', :sections, 'yyy' ])
+      expect(path.address).to eq('articles/xxx/sections/yyy')
+    end
+
     it 'declares the root address' do
       subject.define do
         address('https://service.com/api')
         resources(:articles)
       end
-      expect_trace(subject, [ :articles, 'xxx' ], [ 'https://service.com/api' ])
+      path = subject.trace(:show, [ :articles, 'xxx' ])
+      expect(path.address).to eq('https://service.com/api/articles/xxx')
     end
 
-    it 'declares plain resources' do
-      subject.define { resources(:articles) }
-      expect_trace(subject, [ :articles ])
-    end
-
-    it 'declares nested resources' do
-      subject.define { resources(:articles) { resources(:sections) } }
-      expect_trace(subject, [ :articles, 'xxx', :sections, 'yyy' ])
-    end
-
-    it 'declares scoped resources' do
-      subject.define do
-        scope 'https://service.com/api' do
-          scope [ 'v1', :json ] do
-            resources(:articles) { resources(:sections) }
-          end
-        end
-      end
-      expect_trace(subject, [ :articles, 'xxx', :sections, 'yyy' ],
-       [ 'https://service.com/api', 'v1', :json ])
-    end
-
-    restful_member_actions.each do |action|
-      it "declares custom #{ action } operations on members" do
+    restful_actions.each do |action|
+      it "declares #{ action } operations on members" do
         subject.define do
           resources(:articles) { send(action, :shred, on: :member) }
         end
-        expect_trace(subject, [ :articles, 'xxx', :shred ])
+        path = subject.trace(action, [ :articles, 'xxx', :shred ])
+        expect(path.address).to eq('articles/xxx/shred')
       end
 
-      it 'declares custom operations with variable names' do
+      it "declares #{ action } operations on members with variable names" do
         subject.define do
           resources(:articles) { send(action, ':paragraph', on: :member) }
         end
-        expect_trace(subject, [ :articles, 'xxx', 'zzz' ])
+        path = subject.trace(action, [ :articles, 'xxx', 'zzz' ])
+        expect(path.address).to eq('articles/xxx/zzz')
+      end
+
+      it "declares #{ action } operations on collections" do
+        subject.define do
+          resources(:articles) { send(action, :shred, on: :collection) }
+        end
+        path = subject.trace(action, [ :articles, :shred ])
+        expect(path.address).to eq('articles/shred')
+      end
+
+      it "declares #{ action } operations on collections with variable names" do
+        subject.define do
+          resources(:articles) { send(action, ':paragraph', on: :collection) }
+        end
+        path = subject.trace(action, [ :articles, 'zzz' ])
+        expect(path.address).to eq('articles/zzz')
       end
     end
 
-    it 'does not support reopening of resource declarations' do
+    it 'supports reopening of resource declarations' do
       subject.define do
         resources(:articles)
         resources(:articles) { resources(:sections) }
       end
-      expect do
-        subject.trace(:arbitrary, [ :articles, 'xxx', :sections, 'yyy' ])
-      end.to raise_error(Apitizer::Routing::Error, /Not found/i)
+      path = subject.trace(:show, [ :articles, 'xxx', :sections, 'yyy' ])
+      expect(path.address).to eq('articles/xxx/sections/yyy')
     end
   end
 end
