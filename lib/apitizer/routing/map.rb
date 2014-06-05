@@ -1,6 +1,6 @@
 module Apitizer
   module Routing
-    class Mapper
+    class Map
       extend Forwardable
 
       def_delegator :@root, :define_address

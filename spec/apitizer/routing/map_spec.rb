@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-RSpec.describe Apitizer::Routing::Mapper do
+RSpec.describe Apitizer::Routing::Map do
   extend ResourceHelper
 
-  let(:subject_class) { Apitizer::Routing::Mapper }
+  let(:subject_class) { Apitizer::Routing::Map }
 
   def create_path
     double(:<< => nil, :advance => nil, :permitted? => true)
@@ -16,8 +16,8 @@ RSpec.describe Apitizer::Routing::Mapper do
     path
   end
 
-  def expect_trace(mapper, steps, scope = [])
-    mapper.trace(:arbitrary, steps, expect_steps(scope + steps))
+  def expect_trace(map, steps, scope = [])
+    map.trace(:arbitrary, steps, expect_steps(scope + steps))
   end
 
   describe '#define' do

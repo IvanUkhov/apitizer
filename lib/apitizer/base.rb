@@ -2,7 +2,7 @@ module Apitizer
   class Base
     extend Forwardable
 
-    def_delegator :mapper, :define
+    def_delegator :map, :define
 
     def initialize(**options, &block)
       @options = Helper.deep_merge(Apitizer.defaults, options)
@@ -23,8 +23,8 @@ module Apitizer
 
     private
 
-    def mapper
-      @mapper ||= Routing::Mapper.new(&@block)
+    def map
+      @map ||= Routing::Map.new(&@block)
     end
 
     def dispatcher
@@ -34,7 +34,7 @@ module Apitizer
 
     def build_request(action, *arguments)
       method, steps, parameters = prepare_arguments(action, *arguments)
-      path = mapper.trace(action, steps)
+      path = map.trace(action, steps)
       Connection::Request.new(method: method, path: path,
         parameters: parameters)
     end
