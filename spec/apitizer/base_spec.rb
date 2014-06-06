@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Apitizer::Base do
+RSpec.describe Apitizer::Base do
   extend ResourceHelper
 
   let(:subject_class) { Apitizer::Base }
@@ -17,16 +17,20 @@ describe Apitizer::Base do
     end
 
     it 'draws a routing map when a block is given' do
-      scope_name = address
-      subject = subject_class.new { scope(scope_name) { resources(:articles) } }
+      prefix = address
+      subject = subject_class.new do
+        address(prefix)
+        resources(:articles)
+      end
       stub_request(:get, 'articles')
       expect { subject.process(:index, :articles) }.not_to raise_error
     end
 
     it 'customizes the mapping between the REST actions and HTTP verbs' do
-      scope_name = address
+      prefix = address
       subject = subject_class.new(dictionary: { update: :delete }) do
-        scope(scope_name) { resources(:articles) }
+        address(prefix)
+        resources(:articles)
       end
       stub = stub_request(:delete, 'articles/xxx')
       subject.process(:update, :articles, 'xxx')
@@ -34,37 +38,41 @@ describe Apitizer::Base do
     end
   end
 
+  describe '#define' do
+    it 'is another way of drawing a routing map' do
+      prefix = address
+      subject = subject_class.new
+      subject.define do
+        address(prefix)
+        resources(:articles)
+      end
+      stub_request(:get, 'articles')
+      expect { subject.process(:index, :articles) }.not_to raise_error
+    end
+  end
+
   describe '#process' do
     subject do
-      scope_name = address
-      subject_class.new { scope(scope_name) { resources(:articles) } }
-    end
-
-    restful_collection_actions.each do |action|
-      method = rest_http_dictionary[action]
-
-      it "is capable of #{ action } actions" do
-        stub_request(method, 'articles')
-        expect { subject.process(action, :articles) }.not_to raise_error
-      end
-
-      it "is capable of #{ action } actions via alias" do
-        stub_request(method, 'articles')
-        expect { subject.send(action, :articles) }.not_to raise_error
+      prefix = address
+      subject_class.new do
+        address(prefix)
+        resources(:articles)
       end
     end
 
-    restful_member_actions.each do |action|
+    restful_actions.each do |action|
       method = rest_http_dictionary[action]
+      steps = [ :articles ]
+      steps << 'xxx' if restful_member_actions.include?(action)
 
       it "is capable of #{ action } actions" do
-        stub_request(method, 'articles/xxx')
-        expect { subject.process(action, :articles, 'xxx') }.not_to raise_error
+        stub_request(method, steps.join('/'))
+        expect { subject.process(action, *steps) }.not_to raise_error
       end
 
       it "is capable of #{ action } actions via alias" do
-        stub_request(method, 'articles/xxx')
-        expect { subject.send(action, :articles, 'xxx') }.not_to raise_error
+        stub_request(method, steps.join('/'))
+        expect { subject.send(action, *steps) }.not_to raise_error
       end
     end
   end

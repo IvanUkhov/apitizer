@@ -2,29 +2,28 @@ module Apitizer
   module Routing
     module Node
       class Operation < Base
-        def initialize(name, action:, on:, **options)
-          # TODO: how about on == :collection?
-          unless Apitizer.actions.include?(action) && on == :member
-            raise Error, 'Not supported'
-          end
+        def initialize(name, action:, on:)
           @name = name
           @action = action
+          @on = on
         end
 
-        def match(name)
-          if @name.is_a?(String) && @name =~ /^:/
-            true
-          else
-            @name == name
-          end
+        def recognize?(steps)
+          @name == steps.first || @name.to_s =~ /^:/
         end
 
-        def process(path, steps)
-          path << steps.shift # @name
+        def permit?(action, on:)
+          @action == action && @on == on
         end
 
-        def permitted?(action, path)
-          @action == action
+        def on?(on)
+          @on == on
+        end
+
+        private
+
+        def walk(steps, path)
+          path.advance(steps.shift, node: self, on: @on)
         end
       end
     end

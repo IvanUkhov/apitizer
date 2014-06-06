@@ -1,25 +1,33 @@
 module Apitizer
   module Routing
     class Path
-      extend Forwardable
-
       attr_reader :steps, :node
-      def_delegators :steps, :<<
 
-      def initialize
-        @steps = []
+      def initialize(steps: [], node: nil)
+        @steps = steps
+        @node = node
       end
 
       def address
         @steps.map(&:to_s).join('/')
       end
 
-      def advance(node)
+      def advance(step, node:, on: nil)
+        @steps << step
         @node = node
+        @on = on
       end
 
-      def permitted?(action)
-        @node && @node.permitted?(action, self)
+      def permit?(action)
+        @node && @node.permit?(action, on: @on)
+      end
+
+      def on?(on)
+        @on == on
+      end
+
+      def clone
+        self.class.new(steps: @steps.clone, node: @node)
       end
     end
   end

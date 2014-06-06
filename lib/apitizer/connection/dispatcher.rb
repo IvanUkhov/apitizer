@@ -1,23 +1,16 @@
 module Apitizer
   module Connection
     class Dispatcher
-      def initialize(adaptor: :standard, dictionary:, headers: {})
+      def initialize(format:, adaptor: :standard, headers: {})
+        @format = Format.build(format)
         @adaptor = Adaptor.build(adaptor)
-        @dictionary = dictionary
-        @headers = headers
+        @headers = headers.merge('Accept' => @format.mime_type)
       end
 
       def process(request)
-        method = translate(request.action)
-        code, _, body = @adaptor.process(method, request.address,
+        code, _, body = @adaptor.process(request.method, request.address,
           request.parameters, @headers)
-        Response.new(code: code.to_i, body: body)
-      end
-
-      private
-
-      def translate(action)
-        @dictionary[action] or raise Error, 'Unknown action'
+        Response.new(code: code, content: @format.process(body.join))
       end
     end
   end

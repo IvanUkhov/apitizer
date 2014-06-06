@@ -12,11 +12,11 @@ module Apitizer
       :delete => :delete
     },
     headers: {}
-  }.freeze
+  }
 
-  @actions = [ :index, :show, :create, :update, :delete ].freeze
-  @collection_actions = [ :index, :create ].freeze
-  @member_actions = [ :show, :update, :delete ].freeze
+  @actions = [ :index, :show, :create, :update, :delete ]
+  @collection_actions = [ :index, :create ]
+  @member_actions = [ :show, :update, :delete ]
 
   singleton_class.class_eval do
     attr_reader :defaults, :actions, :collection_actions, :member_actions

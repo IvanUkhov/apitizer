@@ -1,9 +1,13 @@
 require 'json'
 
 module Apitizer
-  module Processing
-    module Parser
+  module Connection
+    module Format
       class JSON
+        def mime_type
+          'application/json'
+        end
+
         def process(data)
           ::JSON.parse(data)
         rescue
