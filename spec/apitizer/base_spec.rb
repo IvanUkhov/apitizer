@@ -6,8 +6,8 @@ RSpec.describe Apitizer::Base do
   let(:subject_class) { Apitizer::Base }
   let(:address) { 'https://service.com/api' }
 
-  def stub_request(method, address)
-    stub_http_request(method, "https://service.com/api/#{ address }").
+  def stub_request(method, path)
+    stub_http_request(method, "#{ address }/#{ path }").
       to_return(code: '200', body: '{}')
   end
 
@@ -70,7 +70,7 @@ RSpec.describe Apitizer::Base do
         expect { subject.process(action, *steps) }.not_to raise_error
       end
 
-      it "is capable of #{ action } actions via alias" do
+      it "is capable of #{ action } actions via the corresponding alias" do
         stub_request(method, steps.join('/'))
         expect { subject.send(action, *steps) }.not_to raise_error
       end
