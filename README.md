@@ -65,7 +65,7 @@ apitizer.delete(:posts, post_id)
 apitizer.delete(:posts, post_id, :comments, comment_id)
 ```
 
-## Real-life Example
+## Example
 Here is an example for the [Typekit API](https://typekit.com/docs/api).
 Check out [Typekit Client](https://github.com/IvanUkhov/typekit-client)
 as well.
