@@ -1,5 +1,7 @@
 .DS_Store
-*.swo
 *.swp
+*.swo
 *.gem
 Gemfile.lock
+doc
+.yardoc
