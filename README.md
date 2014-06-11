@@ -1,4 +1,4 @@
-# Apitizer [![Gem Version](https://badge.fury.io/rb/apitizer.svg)](http://badge.fury.io/rb/apitizer) [![Build Status](https://travis-ci.org/IvanUkhov/apitizer.svg?branch=master)](https://travis-ci.org/IvanUkhov/apitizer)
+# Apitizer [![Gem Version](https://badge.fury.io/rb/apitizer.svg)](http://badge.fury.io/rb/apitizer) [![Dependency Status](https://gemnasium.com/IvanUkhov/apitizer.svg)](https://gemnasium.com/IvanUkhov/apitizer) [![Build Status](https://travis-ci.org/IvanUkhov/apitizer.svg?branch=master)](https://travis-ci.org/IvanUkhov/apitizer)
 The main ingredient of a RESTful API client.
 
 ## Installation
