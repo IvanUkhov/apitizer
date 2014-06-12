@@ -32,19 +32,19 @@ module Apitizer
         adaptor: @options[:adaptor], headers: @options[:headers])
     end
 
-    def build_request(action, *arguments)
-      method, steps, parameters = prepare_arguments(action, *arguments)
+    def build_request(*arguments)
+      action, method, steps, parameters = prepare(*arguments)
       Connection::Request.new(method: method, path: map.trace(action, steps),
         parameters: parameters)
     end
 
-    def prepare_arguments(action, *path)
+    def prepare(action, *path)
+      action = action.to_sym
+      method = @options[:dictionary][action] or raise Error, 'Unknown action'
       parameters = path.last.is_a?(Hash) ? path.pop : {}
-      [ translate(action), path.flatten.map(&:to_sym), parameters ]
-    end
+      steps = path.flatten.map(&:to_sym)
 
-    def translate(action)
-      @options[:dictionary][action] or raise Error, 'Unknown action'
+      [ action, method, steps, parameters ]
     end
   end
 end
