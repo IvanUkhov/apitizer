@@ -33,7 +33,8 @@ module Apitizer
     private
 
     def self.prepare_parameters(parameters)
-      # PATCH: https://github.com/rack/rack/issues/557
+      # PATCH 1: https://github.com/rack/rack/issues/557
+      # PATCH 2: https://github.com/rack/rack/pull/698
       Hash[
         parameters.map do |key, value|
           case value
@@ -41,10 +42,12 @@ module Apitizer
             [ key, value.to_s ]
           when Hash
             [ key, prepare_parameters(value) ]
+          when Array
+            value.empty? ? nil : [ key, value ]
           else
             [ key, value ]
           end
-        end
+        end.compact
       ]
     end
   end

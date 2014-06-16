@@ -49,6 +49,11 @@ RSpec.describe Apitizer::Helper do
       expect(query).to eq('keywords[]=hitchhiker&keywords[]=galaxy')
     end
 
+    it 'handles parameters whose values are lists with no elements' do
+      query = subject_module.build_query(title: 'Pulp Fiction', keywords: [])
+      expect(query).to eq('title=Pulp+Fiction')
+    end
+
     it 'handles parameters whose values are object lists' do
       queries = [
         'genres[0][name]=Comedy&genres[1][name]=Fiction',
