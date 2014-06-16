@@ -35,13 +35,10 @@ RSpec.describe Apitizer::Helper do
 
   describe '.build_query' do
     it 'handels ordinary parameters' do
-      queries = [
-        'title=Meaning+of+Life&author=Random+Number+Generator',
-        'author=Random+Number+Generator&title=Meaning+of+Life'
-      ]
       query = subject_module.build_query(
         title: 'Meaning of Life', author: 'Random Number Generator')
-      expect(queries).to include(query)
+      expect(query).to \
+        eq('title=Meaning+of+Life&author=Random+Number+Generator')
     end
 
     it 'handles parameters whose values are ordinary lists' do
@@ -55,13 +52,10 @@ RSpec.describe Apitizer::Helper do
     end
 
     it 'handles parameters whose values are object lists' do
-      queries = [
-        'genres[0][name]=Comedy&genres[1][name]=Fiction',
-        'genres[1][name]=Fiction&genres[0][name]=Comedy'
-      ]
       query = subject_module.build_query(
         genres: { 0 => { name: 'Comedy' }, 1 => { name: 'Fiction' } })
-      expect(queries).to include(query)
+      expect(query).to \
+        eq('genres[0][name]=Comedy&genres[1][name]=Fiction')
     end
 
     it 'converts integers to decimal strings' do
@@ -70,13 +64,10 @@ RSpec.describe Apitizer::Helper do
     end
 
     it 'converts integers in object lists to decimal strings' do
-      queries = [
-        'primes[0][value]=2&primes[1][value]=3',
-        'primes[1][value]=3&primes[0][value]=2'
-      ]
       query = subject_module.build_query(
         primes: { 0 => { value: 2 }, 1 => { value: 3 } })
-      expect(queries).to include(query)
+      expect(query).to \
+        eq('primes[0][value]=2&primes[1][value]=3')
     end
 
     it 'converts the logical true to the string true' do
