@@ -81,6 +81,13 @@ RSpec.describe Apitizer::Connection::Adaptor do
             response = subject.process(method, address, life: 42)
             expect(stub).to have_been_requested
           end
+
+          it 'sets the charset parameter to UTF-8' do
+            stub = stub_http_request(method, address).with(
+              headers: { 'Content-Type' => /charset=UTF-8/ })
+            response = subject.process(method, address, life: 42)
+            expect(stub).to have_been_requested
+          end
         end
       end
 

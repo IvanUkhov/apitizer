@@ -26,7 +26,8 @@ module Apitizer
     end
 
     def self.build_query(parameters)
-      Rack::Utils.build_nested_query(prepare_parameters(parameters))
+      query = Rack::Utils.build_nested_query(prepare_parameters(parameters))
+      query.encode!('UTF-8')
     end
 
     private

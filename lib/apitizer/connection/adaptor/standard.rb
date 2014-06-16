@@ -37,7 +37,10 @@ module Apitizer
           else
             request = klass.new(URI(address))
             request.body = parameters
-            request['Content-Type'] = 'application/x-www-form-urlencoded'
+            request['Content-Type'] = [
+              'application/x-www-form-urlencoded',
+              "charset=#{ parameters.encoding.to_s }"
+            ].join('; ')
           end
 
           request

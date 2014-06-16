@@ -83,5 +83,10 @@ RSpec.describe Apitizer::Helper do
       query = subject_module.build_query(published: false)
       expect(query).to eq('published=false')
     end
+
+    it 'returns a string encoded in UTF-8' do
+      query = subject_module.build_query(alpha: 'omega')
+      expect(query.encoding.to_s).to match(/^UTF-8$/i)
+    end
   end
 end
