@@ -34,28 +34,39 @@ RSpec.describe Apitizer::Helper do
   end
 
   describe '.build_query' do
-    it 'handels ordinary parameters' do
+    it 'handles ordinary parameters' do
       query = subject_module.build_query(
         title: 'Meaning of Life', author: 'Random Number Generator')
       expect(query).to \
         eq('title=Meaning+of+Life&author=Random+Number+Generator')
     end
 
-    it 'handles parameters whose values are ordinary lists' do
+    it 'handles parameters whose values are ordinary arrays' do
       query = subject_module.build_query(keywords: [ 'hitchhiker', 'galaxy' ])
       expect(query).to eq('keywords[]=hitchhiker&keywords[]=galaxy')
     end
 
-    it 'handles parameters whose values are lists with no elements' do
-      query = subject_module.build_query(title: 'Pulp Fiction', keywords: [])
-      expect(query).to eq('title=Pulp+Fiction')
-    end
-
-    it 'handles parameters whose values are object lists' do
+    it 'handles parameters whose values are object arrays' do
       query = subject_module.build_query(
         genres: { 0 => { name: 'Comedy' }, 1 => { name: 'Fiction' } })
       expect(query).to \
         eq('genres[0][name]=Comedy&genres[1][name]=Fiction')
+    end
+
+    it 'ignores parameters whose values are empty ordinary arrays' do
+      query = subject_module.build_query(title: 'Pulp Fiction', keywords: [])
+      expect(query).to eq('title=Pulp+Fiction')
+    end
+
+    it 'ignores parameters whose values are empty object arrays' do
+      query = subject_module.build_query(title: 'Pulp Fiction', genres: {})
+      expect(query).to eq('title=Pulp+Fiction')
+    end
+
+    it 'ignores deeply nested empty structures' do
+      query = subject_module.build_query(title: 'Pulp Fiction',
+        genres: { 0 => { :name => { :language => [ nil, nil, [], {} ] } } })
+      expect(query).to eq('title=Pulp+Fiction')
     end
 
     it 'converts integers to decimal strings' do
@@ -78,6 +89,11 @@ RSpec.describe Apitizer::Helper do
     it 'converts the logical false to the string false' do
       query = subject_module.build_query(published: false)
       expect(query).to eq('published=false')
+    end
+
+    it 'raises an exception for unknown classes' do
+      expect { subject_module.build_query(a: { b: Class.new.new }) }.to \
+        raise_error(ArgumentError)
     end
 
     it 'returns a string encoded in UTF-8' do

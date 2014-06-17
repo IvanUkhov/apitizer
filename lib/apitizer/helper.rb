@@ -32,23 +32,28 @@ module Apitizer
 
     private
 
-    def self.prepare_parameters(parameters)
+    def self.prepare_parameters(value)
       # PATCH 1: https://github.com/rack/rack/issues/557
       # PATCH 2: https://github.com/rack/rack/pull/698
-      Hash[
-        parameters.map do |key, value|
-          case value
-          when Integer, TrueClass, FalseClass
-            [ key, value.to_s ]
-          when Hash
-            [ key, prepare_parameters(value) ]
-          when Array
-            value.empty? ? nil : [ key, value ]
-          else
-            [ key, value ]
-          end
-        end.compact
-      ]
+      case value
+      when NilClass, String
+        value
+      when Symbol, Integer, TrueClass, FalseClass
+        value.to_s
+      when Array
+        value = value.map { |v| prepare_parameters(v) }.compact
+        value.empty? ? nil : value
+      when Hash
+        value = Hash[
+          value.map do |k, v|
+            v = prepare_parameters(v)
+            v.nil? ? nil : [ k, v ]
+          end.compact
+        ]
+        value.empty? ? nil : value
+      else
+        raise ArgumentError, 'Unknown parameter class'
+      end
     end
   end
 end
