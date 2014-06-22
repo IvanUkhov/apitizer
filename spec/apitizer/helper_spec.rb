@@ -91,7 +91,19 @@ RSpec.describe Apitizer::Helper do
       expect(query).to eq('published=false')
     end
 
-    it 'raises an exception for unknown classes' do
+    it 'handles an arbitrary object that responds to #to_a' do
+      object = double(to_a: [ 'one', 'two' ])
+      query = subject_module.build_query(digits: object)
+      expect(query).to eq('digits[]=one&digits[]=two')
+    end
+
+    it 'handles an arbitrary object that responds to #to_h' do
+      object = double(to_h: { one: 1, two: 2 })
+      query = subject_module.build_query(digits: object)
+      expect(query).to eq('digits[one]=1&digits[two]=2')
+    end
+
+    it 'raises an exception for an unknown objects without #to_a and #to_h' do
       expect { subject_module.build_query(a: { b: Class.new.new }) }.to \
         raise_error(ArgumentError)
     end

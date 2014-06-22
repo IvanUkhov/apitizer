@@ -52,8 +52,16 @@ module Apitizer
         ]
         value.empty? ? nil : value
       else
-        raise ArgumentError, 'Unknown parameter class'
+        if value.respond_to?(:to_a)
+          prepare_parameters(value.to_a)
+        elsif value.respond_to?(:to_h)
+          prepare_parameters(value.to_h)
+        else
+          raise ArgumentError, 'Unknown parameter class'
+        end
       end
     end
+
+    private_class_method :prepare_parameters
   end
 end
