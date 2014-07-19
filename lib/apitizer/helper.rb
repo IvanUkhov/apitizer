@@ -42,6 +42,9 @@ module Apitizer
         value.to_s
       when Array
         value = value.map { |v| prepare_parameters(v) }.compact
+        if value.any? { |v| v.is_a?(Hash) }
+          value = Hash[(0...value.length).to_a.zip(value)]
+        end
         value.empty? ? nil : value
       when Hash
         value = Hash[

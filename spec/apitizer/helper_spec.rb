@@ -48,7 +48,7 @@ RSpec.describe Apitizer::Helper do
 
     it 'handles parameters whose values are object arrays' do
       query = subject_module.build_query(
-        genres: { 0 => { name: 'Comedy' }, 1 => { name: 'Fiction' } })
+        genres: [ { name: 'Comedy' }, { name: 'Fiction' } ])
       expect(query).to \
         eq('genres[0][name]=Comedy&genres[1][name]=Fiction')
     end
@@ -65,7 +65,7 @@ RSpec.describe Apitizer::Helper do
 
     it 'ignores deeply nested empty structures' do
       query = subject_module.build_query(title: 'Pulp Fiction',
-        genres: { 0 => { :name => { :language => [ nil, nil, [], {} ] } } })
+        genres: [ { :name => { :language => [ nil, nil, [], {} ] } } ])
       expect(query).to eq('title=Pulp+Fiction')
     end
 
@@ -74,9 +74,9 @@ RSpec.describe Apitizer::Helper do
       expect(query).to eq('page=42')
     end
 
-    it 'converts integers in object lists to decimal strings' do
+    it 'converts integers in object arrays to decimal strings' do
       query = subject_module.build_query(
-        primes: { 0 => { value: 2 }, 1 => { value: 3 } })
+        primes: [ { value: 2 }, { value: 3 } ])
       expect(query).to \
         eq('primes[0][value]=2&primes[1][value]=3')
     end
