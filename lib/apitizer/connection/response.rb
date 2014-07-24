@@ -3,9 +3,9 @@ module Apitizer
     class Response
       attr_reader :code, :content
 
-      def initialize(code:, content:)
-        @code = code
-        @content = content
+      def initialize(options)
+        @code = options.fetch(:code)
+        @content = options.fetch(:content)
       end
     end
   end

@@ -4,7 +4,7 @@ RSpec.describe Apitizer::Connection::Adaptor do
   let(:parent_module) { Apitizer::Connection }
   let(:address) { 'https://service.com/api/articles' }
 
-  shared_examples 'a proper postman' do |method:|
+  shared_examples 'a proper postman' do |method|
     it 'takes into account headers' do
       headers = { 'Secret-Token' => 'arbitrary' }
       stub = stub_http_request(method, address).with(headers: headers)
@@ -13,7 +13,7 @@ RSpec.describe Apitizer::Connection::Adaptor do
     end
   end
 
-  shared_examples '#call of a Rack app' do |method:|
+  shared_examples '#call of a Rack app' do |method|
     let(:code) { 200 }
     let(:headers) { { 'a' => [ 'b' ] } }
     let(:body) { 'Hej!' }
@@ -60,8 +60,8 @@ RSpec.describe Apitizer::Connection::Adaptor do
     describe '#process' do
       [ :get ].each do |method|
         context "when sending #{ method } requests" do
-          it_behaves_like '#call of a Rack app', method: method
-          it_behaves_like 'a proper postman', method: method
+          it_behaves_like '#call of a Rack app', method
+          it_behaves_like 'a proper postman', method
 
           it 'encodes parameters into the URI' do
             stub = stub_http_request(method, address).with(query: { life: 42 })
@@ -73,8 +73,8 @@ RSpec.describe Apitizer::Connection::Adaptor do
 
       [ :post, :put, :patch, :delete ].each do |method|
         context "when sending #{ method } requests" do
-          it_behaves_like '#call of a Rack app', method: method
-          it_behaves_like 'a proper postman', method: method
+          it_behaves_like '#call of a Rack app', method
+          it_behaves_like 'a proper postman', method
 
           it 'encodes parameters into the body' do
             stub = stub_http_request(method, address).with(body: 'life=42')

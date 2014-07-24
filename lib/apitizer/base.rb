@@ -4,7 +4,7 @@ module Apitizer
 
     def_delegator :map, :define
 
-    def initialize(**options, &block)
+    def initialize(options = {}, &block)
       @options = Helper.deep_merge(Apitizer.defaults, options)
       @block = block
     end
@@ -41,7 +41,7 @@ module Apitizer
     def prepare(action, *path)
       action = action.to_sym
       method = @options[:dictionary][action] or raise Error, 'Unknown action'
-      parameters = path.last.is_a?(Hash) ? path.pop : {}
+      parameters = Helper.extract_hash!(path)
       steps = path.flatten.map(&:to_sym)
 
       [ action, method, steps, parameters ]

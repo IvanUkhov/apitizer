@@ -10,7 +10,7 @@ RSpec.describe Apitizer::Routing::Node do
     end
   end
 
-  shared_examples 'an adequate collection guard' do |only: restful_actions|
+  shared_examples 'an adequate collection guard' do |only = restful_actions|
     (restful_collection_actions & only).each do |action|
       it "permits #{ action } actions" do
         path = root.trace(steps)
@@ -33,7 +33,7 @@ RSpec.describe Apitizer::Routing::Node do
     end
   end
 
-  shared_examples 'an adequate member guard' do |only: restful_actions|
+  shared_examples 'an adequate member guard' do |only = restful_actions|
     (restful_member_actions & only).each do |action|
       it "permites #{ action } actions" do
         path = root.trace(steps)
@@ -96,13 +96,13 @@ RSpec.describe Apitizer::Routing::Node do
     context 'when looking for collections' do
       let(:steps) { [ :articles ] }
       it_behaves_like 'an adequate pathfinder'
-      it_behaves_like 'an adequate collection guard', only: only
+      it_behaves_like 'an adequate collection guard', only
     end
 
     context 'when looking for members' do
       let(:steps) { [ :articles, 'xxx' ] }
       it_behaves_like 'an adequate pathfinder'
-      it_behaves_like 'an adequate member guard', only: only
+      it_behaves_like 'an adequate member guard', only
     end
   end
 

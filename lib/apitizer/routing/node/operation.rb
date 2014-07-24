@@ -2,18 +2,18 @@ module Apitizer
   module Routing
     module Node
       class Operation < Base
-        def initialize(name, action:, on:)
+        def initialize(name, options = {})
           @name = name
-          @action = action
-          @on = on
+          @action = options.fetch(:action)
+          @on = options.fetch(:on)
         end
 
         def recognize?(steps)
           @name == steps.first || @name.to_s =~ /^:/
         end
 
-        def permit?(action, on:)
-          @action == action && @on == on
+        def permit?(action, options)
+          @action == action && @on == options.fetch(:on)
         end
 
         def on?(on)

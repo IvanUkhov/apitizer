@@ -1,10 +1,11 @@
 module Apitizer
   module Connection
     class Dispatcher
-      def initialize(format:, adaptor: :standard, headers: {})
-        @format = Format.build(format)
-        @adaptor = Adaptor.build(adaptor)
-        @headers = headers.merge('Accept' => @format.mime_type)
+      def initialize(options)
+        @format = Format.build(options.fetch(:format))
+        @adaptor = Adaptor.build(options[:adaptor] || :standard)
+        @headers = options[:headers] || {}
+        @headers.merge!('Accept' => @format.mime_type)
       end
 
       def process(request)

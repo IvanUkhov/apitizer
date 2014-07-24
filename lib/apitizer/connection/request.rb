@@ -6,10 +6,10 @@ module Apitizer
       attr_reader :method, :path, :parameters
       def_delegator :path, :address
 
-      def initialize(method:, path:, parameters: {})
-        @method = method
-        @path = path
-        @parameters = parameters
+      def initialize(options)
+        @method = options.fetch(:method)
+        @path = options.fetch(:path)
+        @parameters = options[:parameters] || {}
       end
     end
   end

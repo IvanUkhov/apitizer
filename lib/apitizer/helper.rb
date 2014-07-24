@@ -25,6 +25,10 @@ module Apitizer
       one.merge(two, &merger)
     end
 
+    def self.extract_hash!(arguments)
+      arguments.last.is_a?(Hash) ? arguments.pop : {}
+    end
+
     def self.build_query(parameters)
       query = Rack::Utils.build_nested_query(prepare_parameters(parameters))
       query.encode!('UTF-8')

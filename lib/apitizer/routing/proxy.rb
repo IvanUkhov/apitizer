@@ -1,16 +1,16 @@
 module Apitizer
   module Routing
     class Proxy
-      def initialize(owner, **options)
+      def initialize(owner, options = {})
         @owner = owner
         @options = options
       end
 
-      def method_missing(name, *arguments, **options, &block)
+      def method_missing(name, *arguments, &block)
         name = :"define_#{ name }"
         return super unless @owner.respond_to?(name)
-        # NOTE: https://bugs.ruby-lang.org/issues/9776
-        @owner.send(name, *arguments, **options, **@options, &block)
+        options = Helper.extract_hash!(arguments)
+        @owner.send(name, *arguments, options.merge(@options), &block)
       end
     end
   end

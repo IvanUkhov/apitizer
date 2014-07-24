@@ -25,7 +25,7 @@ module Apitizer
         def recognize?(steps)
         end
 
-        def permit?(action, on:)
+        def permit?(action, options)
         end
 
         private

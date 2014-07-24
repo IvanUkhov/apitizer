@@ -3,19 +3,19 @@ module Apitizer
     class Path
       attr_reader :steps, :node
 
-      def initialize(steps: [], node: nil)
-        @steps = steps
-        @node = node
+      def initialize(options = {})
+        @steps = options[:steps] || []
+        @node = options[:node]
       end
 
       def address
         @steps.map(&:to_s).join('/')
       end
 
-      def advance(step, node:, on: nil)
+      def advance(step, options)
         @steps << step
-        @node = node
-        @on = on
+        @node = options.fetch(:node)
+        @on = options[:on]
       end
 
       def permit?(action)

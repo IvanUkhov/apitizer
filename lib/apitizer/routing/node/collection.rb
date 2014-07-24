@@ -2,8 +2,10 @@ module Apitizer
   module Routing
     module Node
       class Collection < Base
-        def initialize(name, only: nil, except: [])
+        def initialize(name, options = {})
           @name = name
+          only = options[:only]
+          except = options[:except] || []
           @actions = (only && Array(only) || Apitizer.actions) - Array(except)
         end
 
@@ -11,8 +13,9 @@ module Apitizer
           @name == steps.first
         end
 
-        def permit?(action, on:)
-          @actions.include?(action) && on == Helper.action_scope(action)
+        def permit?(action, options)
+          @actions.include?(action) &&
+            Helper.action_scope(action) == options.fetch(:on)
         end
 
         private
