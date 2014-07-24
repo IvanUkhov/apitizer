@@ -41,6 +41,18 @@ RSpec.describe Apitizer::Helper do
         eq('title=Meaning+of+Life&author=Random+Number+Generator')
     end
 
+    it 'handles parameters whose values are empty strings' do
+      query = subject_module.build_query(
+        first: 'Random', second: '', third: 'Generator')
+      expect(query).to eq('first=Random&second=&third=Generator')
+    end
+
+    it 'handles parameters whose values are nils' do
+      query = subject_module.build_query(
+        first: 'Random', second: nil, third: 'Generator')
+      expect(query).to eq('first=Random&third=Generator')
+    end
+
     it 'handles parameters whose values are ordinary arrays' do
       query = subject_module.build_query(keywords: [ 'hitchhiker', 'galaxy' ])
       expect(query).to eq('keywords[]=hitchhiker&keywords[]=galaxy')
