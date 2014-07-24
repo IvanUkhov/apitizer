@@ -22,8 +22,6 @@ Alternatively, you can install the gem manually:
 $ gem install apitizer
 ```
 
-Note that the minimal supported version of Ruby is `2.1`.
-
 ## Usage
 
 Create an apitizer describing the API of the Web service you would like

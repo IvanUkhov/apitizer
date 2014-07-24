@@ -1,3 +1,7 @@
+## Apitizer 0.0.3 (July 24, 2014)
+
+* Support for Ruby >= 1.9.3 instead of Ruby >= 2.1.
+
 ## Apitizer 0.0.2 (July 20, 2014)
 
 * A new strategy for searching request endpoints.
